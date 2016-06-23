@@ -14,18 +14,20 @@ var connection = mysql.createConnection({
 }) // end var connection
 
 
+
 // what to do if error
 connection.connect(function(err) {
 	if (err) throw err;
 	console.log('connected as id'+ connection.threadId)
 }); // end connection.connect(function(err)
 
+selectProduct();
 
 // function selectProduct()
 function selectProduct() {
 		connection.query('SELECT * FROM Products', function(err, data) {
 			if (err) throw err;
-				console.log(data);
+				// console.log(data);
 				console.log("The following items are for sale.")
 				console.log("*********************************")
 				for (prod in data) {
@@ -72,15 +74,22 @@ function inquiry() {
 					}
 					
 					// validate if there are enough items in stock
-					else if ((parseInt(data[0].StockQuantity) < parseInt(user.StockQuantity)) || (parseInt(user.StockQuantity) < 1)) {
-						console.log("Insufficient Quantity... Please try again!" )
+					else if (parseInt(data[0].StockQuantity < parseInt(user.StockQuantity)) || (parseInt(user.StockQuantity) < 1)) {
+						console.log("Insufficient Quantity... Please try again!");
 						inquiry();
 					}
 					
 					// item exists and enough in stock
 					else {
-						console.log(data);	
-					}
+						var newStock = parseInt(data[0].StockQuantity) - parseInt(user.StockQuantity)
+						console.log("old: "+parseInt(data[0].StockQuantity)+" , New: "+newStock);
+						connection.query('UPDATE Products SET StockQuantity = ? WHERE ItemID = ?', [newStock, user.ItemID], function (err, result) {
+	  						if (err) throw err;
+	  						console.log("You ordered "+user.StockQuantity+" of "+data[0].ProductName+"(s) at "+data[0].Price+" each.");
+	  						console.log("Your order total is: $"+(parseInt(user.StockQuantity)*data[0].Price).toFixed(2));			
+						}) // end connection.query('UPDATE Products SET StockQuantity
+								
+					} // end else
 			    
 			    }); // end connection.query('SELECT * FROM Products WHERE ItemID = ?', [user.ItemID], function(err, data) 
 			
