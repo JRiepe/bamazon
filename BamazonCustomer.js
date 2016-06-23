@@ -72,8 +72,8 @@ function inquiry() {
 					}
 					
 					// validate if there are enough items in stock
-					else if (parseInt(data[0].StockQuantity) < parseInt(user.StockQuantity)) {
-						console.log("I'm sorry but there are only "+data[0].StockQuantity+" items left. You requested "+user.StockQuantity+". Please try again!" )
+					else if ((parseInt(data[0].StockQuantity) < parseInt(user.StockQuantity)) || (parseInt(user.StockQuantity) < 1)) {
+						console.log("Insufficient Quantity... Please try again!" )
 						inquiry();
 					}
 					
